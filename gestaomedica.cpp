@@ -49,6 +49,12 @@ struct Medico
     int statusmed;
 };
 
+struct Indice_medico
+{
+    int codigoidxmedico;
+    int enderidxmedico;
+};
+
 struct ConsultaMarcada
 {
     string cpf_paciente;
@@ -60,7 +66,6 @@ struct ConsultaMarcada
 void leitura_paciente(struct Paciente cli[], int &cont)
 {
     int i = 0;
-
     for (int saida = 1; i < cont && saida != 0; i++)
     {
         cout << "\n\nCodigo Paciente " << (i + 1) << ": ";
@@ -88,7 +93,7 @@ void leitura_paciente(struct Paciente cli[], int &cont)
         else
             saida = 0;
     }
-    cont = i - 1;
+    cont = i;
 }
 
 void leitura_indice_paciente(struct Indice_paciente idx[], int cont)
@@ -96,7 +101,7 @@ void leitura_indice_paciente(struct Indice_paciente idx[], int cont)
 
     for (int i = 0; i < cont; i++)
     {
-        cout << "\n\nCodigo do Indice " << (i + 1) << ": ";
+        cout << "\n\nCodigo do Indice " << (i) << ": ";
         cin >> idx[i].codigoidxpaciente;
         cout << "Endereco Fisico na Area de Dados: ";
         cin >> idx[i].enderidxpaciente;
@@ -118,7 +123,7 @@ void leitura_especializacao(struct Especializacao cli[], int &cont)
         else
             saida = 0;
     }
-    cont = i - 1;
+    cont = i;
 }
 
 void leitura_indicie_especializacao(struct Indice_especializacao idx[], int cont)
@@ -126,7 +131,7 @@ void leitura_indicie_especializacao(struct Indice_especializacao idx[], int cont
 
     for (int i = 0; i < cont; i++)
     {
-        cout << "\n\nCodigo do Indice " << (i + 1) << ": ";
+        cout << "\n\nCodigo do Indice " << (i) << ": ";
         cin >> idx[i].codigoidxespecializacao;
         cout << "Endereco Fisico na Area de Dados: ";
         cin >> idx[i].enderidxespecializacao;
@@ -136,7 +141,7 @@ void leitura_indicie_especializacao(struct Indice_especializacao idx[], int cont
 void leitura_medico(struct Medico cli[], int &cont)
 {
     int i = 0;
-    for (int saida = 1; i < 20 && saida != 0; i++)
+    for (int saida = 1; i < cont && saida != 0; i++)
     {
         cout << "\n\nCodigo do Medico: " << (i + 1) << ": ";
         cin >> cli[i].codigomedico;
@@ -161,23 +166,53 @@ void leitura_medico(struct Medico cli[], int &cont)
         else
             saida = 0;
     }
-    cont = i - 1;
+    cont = i;
+}
+
+void leitura_indicie_medico(struct Indice_medico idx[], int cont)
+{
+    for (int i = 0; i < cont; i++)
+    {
+        cout << "\n\nCodigo do Indice " << (i) << ": ";
+        cin >> idx[i].codigoidxmedico;
+        cout << "Endereco Fisico na Area de Dados: ";
+        cin >> idx[i].enderidxmedico;
+    }
+}
+
+void buscaaleatoria_paciente(struct Indice_paciente idx[], struct Paciente cli[], int &cont, int cod)
+{
+
+    int i = 0, f = cont;
+    int m = (i + f) / 2;
+    for (; f >= i && cod != idx[m].codigoidxpaciente; m = (i + f) / 2)
+    {
+        if (cod > idx[m].codigoidxpaciente)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    if (cod == idx[m].codigoidxpaciente)
+    {
+        cout << "\n\nPACIENTE JA CADASTRADO - NAO PODE SER INCLUIDO";
+        i = idx[m].enderidxpaciente;
+        cout << "\nCodigo Paciente:" << cli[i].codpaciente;
+        cout << "\tNome: " << cli[i].nomepaciente;
+        cout << "\tCPF: " << cli[i].cpf;
+        cout << "\tIdade: " << cli[i].idade;
+        cout << "\tSexo: " << cli[i].sexo;
+        cout << "\tTelefone: " << cli[i].telefone;
+        cout << "\tEndereco: " << cli[i].endereco;
+        cout << "\tCidade: " << cli[i].cidade;
+        cout << "\tUf: " << cli[i].uf;
+    }
+    else
+        inclusao_paciente(idx, cli, cont.cod);
+    getch();
 }
 
 int main()
 {
-    struct Paciente paciente[20];
-    int cont;
-    struct Indice_paciente indice[20];
-    struct Indice_especializacao indiceespecial[20];
-    struct Especializacao especializacao[20];
-    struct Medico medico[20];
-
-    // leitura_paciente(paciente,cont);
-    // leitura_indice_paciente(indice,cont);
-    // leitura_especializacao(especializacao,cont);
-    // leitura_indicie_especializacao(indiceespecial,cont);
-    // leitura_medico(medico,cont);
 
     int varleitura = 1;
     while (varleitura > 0)
@@ -192,9 +227,9 @@ int main()
         cin >> varleitura;
         system("cls");
 
-        if (varleitura == 1)
+        switch (varleitura)
         {
-
+        case 1:
             cout << "Selecione o desejado" << endl;
             cout << "\t1- Paciente" << endl;
             cout << "\t2- Especializacao" << endl;
@@ -207,6 +242,7 @@ int main()
             if (escolhacadastro == 1)
             {
                 struct Paciente paciente[20];
+                struct Indice_paciente indicepaciente[20];
                 int contpaciente;
 
                 cout << "\nDigite a quantidade a cadastrar: ";
@@ -215,6 +251,9 @@ int main()
                 if (contpaciente > 0)
                 {
                     leitura_paciente(paciente, contpaciente);
+                    system("cls");
+                    leitura_indice_paciente(indicepaciente, contpaciente);
+                    getch();
                 }
                 else
                     cout << "\nNUMERO INVALIDO";
@@ -224,6 +263,7 @@ int main()
             if (escolhacadastro == 2)
             {
                 struct Especializacao especializacao[20];
+                struct Indice_especializacao indice_especializacao[20];
                 int contespecializacao;
 
                 cout << "\nDigite a Quantidade a cadastrar:";
@@ -232,11 +272,49 @@ int main()
                 if (contespecializacao > 0)
                 {
                     leitura_especializacao(especializacao, contespecializacao);
+                    system("cls");
+                    leitura_indicie_especializacao(indice_especializacao, contespecializacao);
+                    getch();
                 }
                 else
                     cout << "\nNumero invalido!";
                 getch();
                 system("cls");
+            }
+            if (escolhacadastro == 3)
+            {
+                struct Medico medico[20];
+                struct Indice_medico indice_medico[20];
+                int contmedico;
+
+                cout << "\nDigite a Quantidade a cadastrar:";
+                cin >> contmedico;
+
+                if (contmedico > 0)
+                {
+                    leitura_medico(medico, contmedico);
+                    system("cls");
+                    leitura_indicie_medico(indice_medico, contmedico);
+                }
+                else
+                    cout << "\nNumero Invalido!";
+                getch();
+                system("cls");
+            }
+            break;
+        default:
+        case 2:
+            cout << "Selecione o desejado" << endl;
+            cout << "\t1- Paciente" << endl;
+            cout << "\t2- Especializacao" << endl;
+            cout << "\t3- Medico" << endl;
+            cout << "\tDigite a opcao: ";
+            int escolhainserir;
+            cin >> escolhainserir;
+            system("cls");
+
+            if (escolhainserir == 1)
+            {
             }
         }
     }
