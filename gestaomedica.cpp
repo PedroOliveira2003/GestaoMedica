@@ -180,6 +180,68 @@ void leitura_indicie_medico(struct Indice_medico idx[], int cont)
     }
 }
 
+void inclusao_paciente(struct Indice_paciente idx[], struct Paciente cli[], int &cont, int cod)
+{
+    cont++;
+    cli[cont].codpaciente = cod;
+    cout << "\nNome: ";
+    cin >> cli[cont].nomepaciente;
+    cout << "CPF: ";
+    cin >> cli[cont].cpf;
+    cout << "Idade: ";
+    cin >> cli[cont].idade;
+    cout << "Sexo [M/F]: ";
+    cin >> cli[cont].sexo;
+    cout << "Telefone: ";
+    cin >> cli[cont].telefone;
+    cout << "Endereco: ";
+    cin >> cli[cont].endereco;
+    cout << "Cidade: ";
+    cin >> cli[cont].cidade;
+    cout << "UF: ";
+    cin >> cli[cont].uf;
+    cli[cont].status = 1;
+    int i;
+    for (i = cont - 1; idx[i].codigoidxpaciente > cod; i--)
+    {
+        idx[i + 1].codigoidxpaciente = idx[i].codigoidxpaciente;
+        idx[i + 1].enderidxpaciente = idx[i].enderidxpaciente;
+    }
+    idx[i + 1].codigoidxpaciente = cod;
+    idx[i + 1].enderidxpaciente = cont;
+}
+
+void inclusao_medico(struct Indice_medico idx[], struct Medico cli[], int &cont, int cod)
+{
+    cont++;
+
+    cli[cont].codigomedico = cod;
+    cout << "\nNOME: ";
+    cin >> cli[cont].nomemedico;
+    cout << "CRM: ";
+    cin >> cli[cont].crm;
+    cout << "IDADE: ";
+    cin >> cli[cont].idade;
+    cout << "SEXO: ";
+    cin >> cli[cont].sexomedico;
+    cout << "TELEFONE: ";
+    cin >> cli[cont].telefoneMedico;
+    cout << "CODIGO ESPECIALIZACAO";
+    cin >> cli[cont].codigo_especializacao;
+
+    cout << "VALOR CONSULTA: ";
+    cin >> cli[cont].valorconsulta;
+
+    int i;
+    for (i = cont - 1; idx[i].codigoidxmedico > cod; i--)
+    {
+        idx[i + 1].codigoidxmedico = idx[i].codigoidxmedico;
+        idx[i + 1].enderidxmedico = idx[i].enderidxmedico;
+    }
+    idx[i + 1].codigoidxmedico = cod;
+    idx[i + 1].enderidxmedico = cont;
+}
+
 void buscaaleatoria_paciente(struct Indice_paciente idx[], struct Paciente cli[], int &cont, int cod)
 {
 
@@ -194,25 +256,63 @@ void buscaaleatoria_paciente(struct Indice_paciente idx[], struct Paciente cli[]
     }
     if (cod == idx[m].codigoidxpaciente)
     {
+        system("cls");
         cout << "\n\nPACIENTE JA CADASTRADO - NAO PODE SER INCLUIDO";
         i = idx[m].enderidxpaciente;
-        cout << "\nCodigo Paciente:" << cli[i].codpaciente;
-        cout << "\tNome: " << cli[i].nomepaciente;
-        cout << "\tCPF: " << cli[i].cpf;
-        cout << "\tIdade: " << cli[i].idade;
-        cout << "\tSexo: " << cli[i].sexo;
-        cout << "\tTelefone: " << cli[i].telefone;
-        cout << "\tEndereco: " << cli[i].endereco;
-        cout << "\tCidade: " << cli[i].cidade;
-        cout << "\tUf: " << cli[i].uf;
+        cout << "\nCodigo Paciente:" << cli[i].codpaciente << endl;
+        cout << "\tNome: " << cli[i].nomepaciente << endl;
+        cout << "\tCPF: " << cli[i].cpf << endl;
+        cout << "\tIdade: " << cli[i].idade << endl;
+        cout << "\tSexo: " << cli[i].sexo << endl;
+        cout << "\tTelefone: " << cli[i].telefone << endl;
+        cout << "\tEndereco: " << cli[i].endereco << endl;
+        cout << "\tCidade: " << cli[i].cidade << endl;
+        cout << "\tUf: " << cli[i].uf << endl;
     }
     else
-        inclusao_paciente(idx, cli, cont.cod);
+        inclusao_paciente(idx, cli, cont, cod);
+    getch();
+}
+
+void buscaaleatoria_medico(struct Indice_medico idx[], struct Medico cli[], int &cont, int cod)
+{
+
+    int i = 0, f = cont;
+    int m = (i + f) / 2;
+    for (; f >= i && cod != idx[m].codigoidxmedico; m = (i + f) / 2)
+    {
+        if (cod > idx[m].codigoidxmedico)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+
+    if (cod == idx[m].codigoidxmedico)
+    {
+        system("cls");
+        cout << "\n\nMEDICO JA CADASTRADO - NAO PODE SER INCLUIDO";
+        i = idx[m].enderidxmedico;
+        cout << "\nCODIGO MEDICO: " << cli[i].codigomedico << endl;
+        cout << "\tNOME: " << cli[i].nomemedico << endl;
+        cout << "\tCRM: " << cli[i].crm << endl;
+        cout << "\tIDADE: " << cli[i].idade << endl;
+        cout << "\tSEXO: " << cli[i].sexomedico << endl;
+        cout << "\tTELEFONE: " << cli[i].telefoneMedico << endl;
+        cout << "\tVALOR CONSULTA: " << cli[i].valorconsulta;
+    }
+    else
+        inclusao_medico(idx, cli, cont, cod);
     getch();
 }
 
 int main()
 {
+
+    struct Paciente paciente[20];
+    struct Indice_paciente indicepaciente[20];
+
+    struct Medico medico[20];
+    struct Indice_medico indicemedico[20];
 
     int varleitura = 1;
     while (varleitura > 0)
@@ -241,8 +341,7 @@ int main()
 
             if (escolhacadastro == 1)
             {
-                struct Paciente paciente[20];
-                struct Indice_paciente indicepaciente[20];
+
                 int contpaciente;
 
                 cout << "\nDigite a quantidade a cadastrar: ";
@@ -283,8 +382,8 @@ int main()
             }
             if (escolhacadastro == 3)
             {
-                struct Medico medico[20];
-                struct Indice_medico indice_medico[20];
+                // struct Medico medico[20];
+                // struct Indice_medico indice_medico[20];
                 int contmedico;
 
                 cout << "\nDigite a Quantidade a cadastrar:";
@@ -294,7 +393,7 @@ int main()
                 {
                     leitura_medico(medico, contmedico);
                     system("cls");
-                    leitura_indicie_medico(indice_medico, contmedico);
+                    leitura_indicie_medico(indicemedico, contmedico);
                 }
                 else
                     cout << "\nNumero Invalido!";
@@ -315,6 +414,36 @@ int main()
 
             if (escolhainserir == 1)
             {
+                int codleiturapaciente;
+                int contadorinserirpaciente;
+                cout << "\tINFORME O CODIGO DO PACIENTE A SER INSERIDO" << endl;
+                cin >> codleiturapaciente;
+
+                if (codleiturapaciente > 0)
+                {
+                    buscaaleatoria_paciente(indicepaciente, paciente, contadorinserirpaciente, codleiturapaciente);
+                }
+                else
+                    cout << "\nNUMERO INVALIDO";
+                getch();
+                system("cls");
+            }
+            if (escolhainserir == 3)
+            {
+                int codleituramedico;
+                int contadorinserirmedico;
+                cout << "\t INFORME O CODIGO DO MEDICO A SER INSERIDO" << endl;
+                cin >> codleituramedico;
+
+                if (codleituramedico > 0)
+                {
+
+                    buscaaleatoria_medico(indicemedico, medico, contadorinserirmedico, codleituramedico);
+                }
+                else
+                    cout << "\nNUMERO INVALIDO";
+                getch();
+                system("cls");
             }
         }
     }
