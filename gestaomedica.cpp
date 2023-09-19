@@ -182,6 +182,7 @@ void leitura_indicie_medico(struct Indice_medico idx[], int cont)
 
 void inclusao_paciente(struct Indice_paciente idx[], struct Paciente cli[], int &cont, int cod)
 {
+    cout << "TESTE";
     cont++;
     cli[cont].codpaciente = cod;
     cout << "\nNome: ";
@@ -211,7 +212,9 @@ void inclusao_paciente(struct Indice_paciente idx[], struct Paciente cli[], int 
     idx[i + 1].enderidxpaciente = cont;
 }
 
-void inclusao_medico(struct Indice_medico idx[], struct Medico cli[], int &cont, int cod)
+int buscaaleatoria_especializacao(struct Indice_especializacao idx[], struct Especializacao cli[], int &cont, int cod);
+
+void inclusao_medico(struct Indice_medico idx[], struct Medico cli[], int &cont, int cod, struct Indice_especializacao idxespec[], struct Especializacao cliespec[])
 {
     cont++;
 
@@ -226,9 +229,14 @@ void inclusao_medico(struct Indice_medico idx[], struct Medico cli[], int &cont,
     cin >> cli[cont].sexomedico;
     cout << "TELEFONE: ";
     cin >> cli[cont].telefoneMedico;
-    cout << "CODIGO ESPECIALIZACAO";
+    cout << "CODIGO ESPECIALIZACAO: ";
     cin >> cli[cont].codigo_especializacao;
-
+    int codteste = cli[cont].codigo_especializacao;
+    codteste = buscaaleatoria_especializacao(idxespec, cliespec, cont, codteste);
+    if (codteste > -2)
+    {
+        cout << cliespec[codteste].nomeespecializacao << endl;
+    }
     cout << "VALOR CONSULTA: ";
     cin >> cli[cont].valorconsulta;
 
@@ -240,6 +248,27 @@ void inclusao_medico(struct Indice_medico idx[], struct Medico cli[], int &cont,
     }
     idx[i + 1].codigoidxmedico = cod;
     idx[i + 1].enderidxmedico = cont;
+}
+
+int buscaaleatoria_especializacao(struct Indice_especializacao idx[], struct Especializacao cli[], int &cont, int cod)
+{
+    int i = 0, f = cont;
+    int m = (i + f) / 2;
+    ;
+    for (; f >= i && cod != idx[m].codigoidxespecializacao; m = (i + f) / 2)
+    {
+        if (cod > idx[m].codigoidxespecializacao)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    if (cod == idx[m].codigoidxespecializacao)
+    {
+        cod = idx[m].codigoidxespecializacao;
+        return cod;
+    }
+    else
+        cout << "\n ESPECIALIZACAO NAO ENCONTRADA";
 }
 
 void buscaaleatoria_paciente(struct Indice_paciente idx[], struct Paciente cli[], int &cont, int cod)
@@ -254,6 +283,7 @@ void buscaaleatoria_paciente(struct Indice_paciente idx[], struct Paciente cli[]
         else
             f = m - 1;
     }
+
     if (cod == idx[m].codigoidxpaciente)
     {
         system("cls");
@@ -274,7 +304,7 @@ void buscaaleatoria_paciente(struct Indice_paciente idx[], struct Paciente cli[]
     getch();
 }
 
-void buscaaleatoria_medico(struct Indice_medico idx[], struct Medico cli[], int &cont, int cod)
+void buscaaleatoria_medico(struct Indice_medico idx[], struct Medico cli[], int &cont, int cod, struct Indice_especializacao idxespec[], struct Especializacao cliespec[])
 {
 
     int i = 0, f = cont;
@@ -301,7 +331,7 @@ void buscaaleatoria_medico(struct Indice_medico idx[], struct Medico cli[], int 
         cout << "\tVALOR CONSULTA: " << cli[i].valorconsulta;
     }
     else
-        inclusao_medico(idx, cli, cont, cod);
+        inclusao_medico(idx, cli, cont, cod, idxespec, cliespec);
     getch();
 }
 
@@ -310,9 +340,15 @@ int main()
 
     struct Paciente paciente[20];
     struct Indice_paciente indicepaciente[20];
+    int contpaciente = 0;
 
     struct Medico medico[20];
     struct Indice_medico indicemedico[20];
+    int contmedico = 0;
+
+    struct Especializacao especializacao[20];
+    struct Indice_especializacao indice_espec[20];
+    int contespecializacao = 0;
 
     int varleitura = 1;
     while (varleitura > 0)
@@ -322,6 +358,7 @@ int main()
         cout << "\n-------------------\n";
         cout << "\t1- Cadastrar" << endl;
         cout << "\t2- Inserir" << endl;
+        cout << "\t3- Medicos por ESPECIALIZACAO" << endl;
         cout << "-------------------\n";
         cout << "\tEscolha Opcao: ";
         cin >> varleitura;
@@ -342,8 +379,6 @@ int main()
             if (escolhacadastro == 1)
             {
 
-                int contpaciente;
-
                 cout << "\nDigite a quantidade a cadastrar: ";
                 cin >> contpaciente;
 
@@ -361,9 +396,6 @@ int main()
             }
             if (escolhacadastro == 2)
             {
-                struct Especializacao especializacao[20];
-                struct Indice_especializacao indice_especializacao[20];
-                int contespecializacao;
 
                 cout << "\nDigite a Quantidade a cadastrar:";
                 cin >> contespecializacao;
@@ -372,7 +404,7 @@ int main()
                 {
                     leitura_especializacao(especializacao, contespecializacao);
                     system("cls");
-                    leitura_indicie_especializacao(indice_especializacao, contespecializacao);
+                    leitura_indicie_especializacao(indice_espec, contespecializacao);
                     getch();
                 }
                 else
@@ -382,9 +414,6 @@ int main()
             }
             if (escolhacadastro == 3)
             {
-                // struct Medico medico[20];
-                // struct Indice_medico indice_medico[20];
-                int contmedico;
 
                 cout << "\nDigite a Quantidade a cadastrar:";
                 cin >> contmedico;
@@ -421,7 +450,7 @@ int main()
 
                 if (codleiturapaciente > 0)
                 {
-                    buscaaleatoria_paciente(indicepaciente, paciente, contadorinserirpaciente, codleiturapaciente);
+                    buscaaleatoria_paciente(indicepaciente, paciente, contpaciente, codleiturapaciente);
                 }
                 else
                     cout << "\nNUMERO INVALIDO";
@@ -438,7 +467,7 @@ int main()
                 if (codleituramedico > 0)
                 {
 
-                    buscaaleatoria_medico(indicemedico, medico, contadorinserirmedico, codleituramedico);
+                    buscaaleatoria_medico(indicemedico, medico, contmedico, codleituramedico, indice_espec, especializacao);
                 }
                 else
                     cout << "\nNUMERO INVALIDO";
