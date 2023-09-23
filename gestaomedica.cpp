@@ -262,10 +262,33 @@ int buscaaleatoria_especializacao(struct Indice_especializacao idx[], struct Esp
         else
             f = m - 1;
     }
-    if (cod == idx[m].codigoidxespecializacao)
+    if (cod == cli[m].codigo)
     {
-        cod = idx[m].codigoidxespecializacao;
+        cod = cli[m].codigo;
         return cod;
+    }
+    else
+        cout << "\n ESPECIALIZACAO NAO ENCONTRADA";
+}
+
+void buscaaleatoria_especializacao2(struct Indice_especializacao idx[], struct Especializacao cli[], int &cont, int cod, struct Medico climed[])
+{
+
+    int i = 0, f = cont;
+    int m = (i + f) / 2;
+    ;
+    for (; f >= i && cod != idx[m].codigoidxespecializacao; m = (i + f) / 2)
+    {
+        if (cod > idx[m].codigoidxespecializacao)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+    if (cod == cli[m].codigo && cod == climed[m].codigomedico)
+    {
+        cout << "NOME: " << climed[m].nomemedico << endl;
+        cout << "CRM: " << climed[m].crm << endl;
+        cout << "VALOR: " << climed[m].valorconsulta << endl;
     }
     else
         cout << "\n ESPECIALIZACAO NAO ENCONTRADA";
@@ -302,6 +325,16 @@ void buscaaleatoria_paciente(struct Indice_paciente idx[], struct Paciente cli[]
     else
         inclusao_paciente(idx, cli, cont, cod);
     getch();
+}
+
+void mostrar_espec(struct Especializacao cli[], int &cont)
+{
+    int i = 0;
+    for (i = 0; i < cont; i++)
+    {
+
+        cout << cli[i].codigo << cli[i].nomeespecializacao << endl;
+    }
 }
 
 void buscaaleatoria_medico(struct Indice_medico idx[], struct Medico cli[], int &cont, int cod, struct Indice_especializacao idxespec[], struct Especializacao cliespec[])
@@ -474,6 +507,19 @@ int main()
                 getch();
                 system("cls");
             }
+            break;
+
+        case 3:
+            int codespec;
+            cout << "\t ESPECIALIZACOES CADASTRADAS" << endl;
+            mostrar_espec(especializacao, contespecializacao);
+            cout << "\t ESCOLHA UM OPCAO: ";
+            cin >> codespec;
+
+            buscaaleatoria_especializacao2(indice_espec, especializacao, contespecializacao, codespec, medico);
+
+            getch();
+            system("CLS");
         }
     }
 }
