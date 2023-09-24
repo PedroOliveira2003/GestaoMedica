@@ -63,6 +63,12 @@ struct ConsultaMarcada
     string horario;
 };
 
+struct Indice_consulta
+{
+    int codigoidxconsulta;
+    int enderidxconsulta;
+};
+
 void leitura_paciente(struct Paciente cli[], int &cont)
 {
     int i = 0;
@@ -271,7 +277,7 @@ int buscaaleatoria_especializacao(struct Indice_especializacao idx[], struct Esp
         cout << "\n ESPECIALIZACAO NAO ENCONTRADA";
 }
 
-void buscaaleatoria_especializacao2(struct Indice_especializacao idx[], struct Especializacao cli[], int &cont, int cod, struct Medico climed[])
+void buscaaleatoria_especializacao2(struct Indice_especializacao idx[], struct Especializacao cli[], int &cont, int cod, struct Medico climed[], struct Indice_medico idxmed[])
 {
 
     int i = 0, f = cont;
@@ -284,14 +290,14 @@ void buscaaleatoria_especializacao2(struct Indice_especializacao idx[], struct E
         else
             f = m - 1;
     }
-    if (cod == cli[m].codigo && cod == climed[m].codigomedico)
+    if (cod == cli[m].codigo && cod == idxmed[m].codigoidxmedico)
     {
         cout << "NOME: " << climed[m].nomemedico << endl;
         cout << "CRM: " << climed[m].crm << endl;
         cout << "VALOR: " << climed[m].valorconsulta << endl;
     }
     else
-        cout << "\n ESPECIALIZACAO NAO ENCONTRADA";
+        cout << "\n MEDICO NAO ENCONTRADO";
 }
 
 void buscaaleatoria_paciente(struct Indice_paciente idx[], struct Paciente cli[], int &cont, int cod)
@@ -368,6 +374,48 @@ void buscaaleatoria_medico(struct Indice_medico idx[], struct Medico cli[], int 
     getch();
 }
 
+void buscaaleatoria_medico2(struct Indice_medico idx[], struct Medico cli[], int &cont, string cod, struct Indice_especializacao idxespec[], struct Especializacao cliespec[])
+{
+
+    int i = 0, f = cont;
+    int m = (i + f) / 2;
+    for (; f >= i && cod != cli[m].crm; m = (i + f) / 2)
+    {
+        if (cod > cli[m].crm)
+            i = m + 1;
+        else
+            f = m - 1;
+    }
+
+    if (cod == cli[m].crm)
+    {
+        // system("cls");
+        // i=idx[m].enderidxmedico;
+        // cout<<"\nCODIGO MEDICO: "<<cli[i].codigomedico<<endl;
+        cout << "\tNOME: " << cli[i].nomemedico << endl;
+        cout << "\tCRM: " << cli[i].crm << endl;
+        // cout<<"\tIDADE: "<<cli[i].idade<<endl;
+        // cout<<"\tSEXO: "<<cli[i].sexomedico<<endl;
+        // cout<<"\tTELEFONE: "<<cli[i].telefoneMedico<<endl;
+        // cout<<"\tVALOR CONSULTA: "<<cli[i].valorconsulta;
+    }
+    else
+        cout << "\nMEDICO NAO ENCONTRADO";
+    getch();
+}
+
+void inserir_consulta(struct ConsultaMarcada cli[], struct Indice_consulta idx[], string crm, string cpf, string data, string horario, int &cont)
+{
+
+    cont++;
+    cli[cont].cpf_paciente = cpf;
+    cli[cont].crm_medico = crm;
+    cli[cont].data = data;
+    cli[cont].horario = horario;
+    system("cls");
+    cout << "CONSULTA MARCADA!!! ";
+}
+
 int main()
 {
 
@@ -383,6 +431,10 @@ int main()
     struct Indice_especializacao indice_espec[20];
     int contespecializacao = 0;
 
+    struct ConsultaMarcada consulta[20];
+    struct Indice_consulta indice_consulta[20];
+    int contconsulta = 0;
+
     int varleitura = 1;
     while (varleitura > 0)
     {
@@ -392,6 +444,7 @@ int main()
         cout << "\t1- Cadastrar" << endl;
         cout << "\t2- Inserir" << endl;
         cout << "\t3- Medicos por ESPECIALIZACAO" << endl;
+        cout << "\t4- Agendar Consulta" << endl;
         cout << "-------------------\n";
         cout << "\tEscolha Opcao: ";
         cin >> varleitura;
@@ -516,10 +569,37 @@ int main()
             cout << "\t ESCOLHA UM OPCAO: ";
             cin >> codespec;
 
-            buscaaleatoria_especializacao2(indice_espec, especializacao, contespecializacao, codespec, medico);
+            buscaaleatoria_especializacao2(indice_espec, especializacao, contespecializacao, codespec, medico, indicemedico);
 
             getch();
             system("CLS");
+
+            break;
+
+        case 4:
+            string cpfpaciente;
+            string crmmedico;
+            cout << "\T AGENDAMENTO DE CONSULTA" << endl;
+            cout << "\nDIGITE O CPF DO PACIENTE:" << endl;
+            cin >> cpfpaciente;
+            cout << "\nDIGITE O CRM DO MEDICO: " << endl;
+            cin >> crmmedico;
+
+            buscaaleatoria_medico2(indicemedico, medico, contmedico, crmmedico, indice_espec, especializacao);
+
+            string data;
+            string horario;
+            cout << "\nDIGITE UMA DATA PARA AGENDAR: " << endl;
+            cin >> data;
+            cout << "DIGITE UM HORARIO PARA AGENDAR " << endl;
+            cin >> horario;
+
+            inserir_consulta(consulta, indice_consulta, crmmedico, cpfpaciente, data, horario, contconsulta);
+
+            getch();
+            system("CLS");
+
+            break;
         }
     }
 }
